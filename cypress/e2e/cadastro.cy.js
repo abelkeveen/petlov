@@ -3,11 +3,6 @@ import donationPoint from '../fixtures/donationPoint.json'
 describe('Formulário de Ponto de Doação', () => {
 
   beforeEach(() => {
-    cy.visit('/signup')
-    cy.contains('h1', 'Cadastro de ponto de doação').should('be.visible')
-  })
-
-  it('Deve cadastrar um ponto de doação', () => {
     cy.intercept('GET', `https://viacep.com.br/ws/${donationPoint.address.zipCode}/json/`, {
       statusCode: 200,
       body: {
@@ -18,8 +13,13 @@ describe('Formulário de Ponto de Doação', () => {
         localidade: donationPoint.address.city,
         uf: donationPoint.address.state,
       }
-    }).as('getCep');
+    }).as('getCep')
 
+    cy.visit('/signup')
+    cy.contains('h1', 'Cadastro de ponto de doação').should('be.visible')
+  })
+
+  it('Deve cadastrar um ponto de doação', () => {
     cy.fillDonationForm(donationPoint)
     cy.verifyDisabledFields(donationPoint.address)
 
